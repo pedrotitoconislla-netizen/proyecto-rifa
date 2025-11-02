@@ -1,0 +1,48 @@
+{% load static %}<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sistema de Rifas{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="{% block body_class %}{% endblock %}">
+    <nav>
+        <ul>
+            <li><a href="{% url 'crear_boleta' %}">Crear Boleta</a></li>
+            <li><a href="{% url 'mis_boletas' %}">Mis Boletas</a></li>
+            {% if user.is_authenticated %}
+            
+                {% else %}
+          
+            {% endif %}
+            {% if user.is_staff %}
+                <li><a href="/admin/">Admin</a></li>
+            {% endif %}
+        </ul>
+        <div class="auth-links">
+            {% if user.is_authenticated %}
+                <form method="post" action="{% url 'logout' %}" style="display: inline; margin: 0; padding: 0;">
+                    {% csrf_token %}
+                    <button type"submit" class="auth-button-link">Cerrar Sesión ({{ user.username }})</button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}">Iniciar Sesión</a>
+                <a href="{% url 'register' %}">Registrarse</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="content-wrapper">
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+</html>

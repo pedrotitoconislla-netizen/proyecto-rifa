@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Mis Boletas de Rifa{% endblock %}
+
+{% block content %}
+<div class="boletas-list-container">
+    <h2>Mis Boletas de Rifa</h2>
+    {% if boletas %}
+        {% for boleta in boletas %}
+        <div class="ticket-container">
+            <div class="spider-decoration"></div>
+            <div class="ticket-header">
+                <h1>TICKET DE RIFA</h1>
+            </div>
+            <div class="ticket-content">
+                <div class="ticket-left-circle">
+                    <span>{{ boleta.numero }}</span>
+                </div>
+                <div class="ticket-right-logo">
+                    <img src="{% static 'img/logo_renixir.jpg' %}" alt="Logo Renixir">
+                </div>
+            </div>
+            <div class="ticket-name-label">NOMBRE:</div>
+            <div class="ticket-name-value">{{ boleta.nombre_propietario }}</div>
+            <div class="ticket-footer">
+                CAPORALES RENIXIR CAÑETE
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p>No has creado ninguna boleta todavía. ¡Anímate a <a href="{% url 'crear_boleta' %}" style="color: #FFC107;">crear una</a>!</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,99 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+    <style>
+        #content-main {
+            background-color: #f4f7f6; /* Fondo claro para la página de admin */
+            color: #333; /* Texto oscuro */
+        }
+        /* Damos al ticket su fondo oscuro, ya que el body es claro */
+        .ticket-container {
+            background: linear-gradient(145deg, #2a006f, #0f0030);
+            color: white;
+            margin-left: auto;
+            margin-right: auto; /* Centrar el ticket */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+        /* Asegurarnos que los títulos de nuestro ticket se vean bien */
+        .ticket-container h1, .ticket-container .ticket-name-label {
+            color: white;
+        }
+    </style>
+{% endblock %}
+
+
+{% block content %}
+<div id="content-main">
+    <h1>Sorteo Visual para: {{ rifa.nombre }}</h1>
+    
+    {% if nuevo_ganador %}
+        <div style="text-align: center; margin-bottom: 30px;">
+            <h2 style="color: #27ae60; font-size: 2em;">🎉 ¡NUEVO GANADOR! 🎉</h2>
+            
+            <div class="ticket-container" style="max-width: 350px;"> <div class="spider-decoration"></div>
+                <div class="ticket-header">
+                    <h1>TICKET DE RIFA</h1>
+                </div>
+                <div class="ticket-content">
+                    <div class="ticket-left-circle">
+                        <span>{{ nuevo_ganador.numero }}</span>
+                    </div>
+                    <div class="ticket-right-logo">
+                        <img src="{% static 'img/logo_renixir.png' %}" alt="Logo Renixir">
+                    </div>
+                </div>
+                <div class="ticket-name-label">NOMBRE:</div>
+                <div class="ticket-name-value">{{ nuevo_ganador.nombre_propietario }}</div>
+                <div class="ticket-footer">
+                    CAPORALES RENIXIR CAÑETE
+                </div>
+            </div>
+            <p style="font-size: 1.2em; margin-top: 15px;">
+                Creada por: <strong>{{ nuevo_ganador.usuario_creador.username }}</strong>
+            </p>
+        </div>
+        <hr>
+    {% endif %}
+
+    <div style="text-align: center; background: #f9f9f9; padding: 20px; border-radius: 10px; margin-top: 30px; border: 1px solid #ddd;">
+        {% if boletas_participantes %}
+            <h2 style="margin-top: 0;">Próximo Sorteo</h2>
+            <p style="font-size: 1.1em;">
+                Quedan <strong>{{ boletas_participantes.count }} boletas</strong> participando.
+            </p>
+            <form method="post">
+                {% csrf_token %}
+                <p>Haz clic para seleccionar al siguiente ganador.</p>
+                <button type="submit" class="button" style="background: #E67E22; color: white; font-size: 1.2em; padding: 10px 20px; height: auto;">
+                    ¡Sacar Siguiente Ganador!
+                </button>
+            </form>
+        {% else %}
+             <h2 style="color: #e74c3c; margin-top: 0;">Sorteo Finalizado</h2>
+            <p>No quedan más boletas participantes para sortear en esta rifa.</p>
+        {% endif %}
+    </div>
+
+    {% if ganadores_anteriores %}
+        <div style="background: #eafde7; border: 1px solid #2ecc71; padding: 15px; border-radius: 8px; margin-top: 30px;">
+            <h2 style="color: #27ae60; margin-top: 0;">🏆 Ganadores Anteriores</h2>
+            <ul style="list-style: none; padding-left: 0;">
+                {% for ganador in ganadores_anteriores %}
+                    <li style="font-size: 1.2em; border-bottom: 1px solid #eee; padding: 5px 0;">
+                        <strong>Boleta #{{ ganador.numero }}</strong> - {{ ganador.nombre_propietario }} 
+                        <span style="color: #555;">(Creada por: {{ ganador.usuario_creador.username }})</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    <div style="margin-top: 30px; text-align: center;">
+        <a href="/admin/rifa/rifa/" class="button">Volver a la lista de Rifas</a>
+    </div>
+</div>
+{% endblock %}
