@@ -3,24 +3,237 @@
 
 {% block extrahead %}
     {{ block.super }}
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
     
     <style>
-        #content-main {
-            background-color: #f4f7f6; /* Fondo claro para la página de admin */
-            color: #333; /* Texto oscuro */
+        /* ===== FORZAR ANCHO COMPLETO ===== */
+        #content, #content-main, .container, .container-fluid {
+            max-width: 100% !important;
+            width: 100% !important;
+            padding-left: 10px;
+            padding-right: 10px;
         }
-        /* Damos al ticket su fondo oscuro, ya que el body es claro */
+
+        /* Estilos Generales */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
+        }
+
+        /* Título Principal */
+        .main-title {
+            color: #003366;
+            font-size: 2.5em;
+            font-weight: 900;
+            text-align: center;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* ============================================================
+           === ESTILO DE BOLETA PANORÁMICA (Igual a Mis Boletas) ===
+           ============================================================ */
+        .ticket-wrapper {
+            max-width: 1000px; /* Ancho máximo para el ticket ganador */
+            width: 100%;
+            margin: 0 auto;
+        }
+
         .ticket-container {
-            background: linear-gradient(145deg, #2a006f, #0f0030);
+            /* Fondo Azul Vibrante */
+            background: linear-gradient(90deg, #003366 0%, #0056b3 100%);
+            border-radius: 15px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+            
+            /* Borde Brillante */
+            border: 3px solid #00bcd4;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
+            
+            /* --- DISEÑO HORIZONTAL --- */
+            display: flex;
+            flex-direction: row;
+            align-items: stretch;
+            min-height: 280px;
             color: white;
-            margin-left: auto;
-            margin-right: auto; /* Centrar el ticket */
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            font-family: 'Segoe UI', sans-serif;
         }
-        /* Asegurarnos que los títulos de nuestro ticket se vean bien */
-        .ticket-container h1, .ticket-container .ticket-name-label {
+
+        /* --- PARTE IZQUIERDA (Gráficos) --- */
+        .ticket-left-section {
+            width: 35%;
+            background-color: rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            border-right: 3px dashed rgba(255, 255, 255, 0.3);
+        }
+
+        /* Círculo del Número */
+        .ticket-number-circle {
+            width: 130px;
+            height: 130px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 5px solid #00bcd4;
+            box-shadow: 0 0 20px rgba(0, 188, 212, 0.5);
+            margin-bottom: 20px;
+        }
+        .ticket-number-circle span {
+            font-size: 4em;
+            font-weight: 900;
+            color: #003366;
+            line-height: 1;
+            font-family: 'Arial Black', sans-serif;
+        }
+
+        /* Logo Debajo */
+        .ticket-logo-box img {
+            height: 60px;
+            background: white;
+            padding: 5px 15px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        /* --- PARTE DERECHA (Información) --- */
+        .ticket-right-section {
+            width: 65%;
+            padding: 30px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        /* Decoración Araña */
+        .spider-bg {
+            position: absolute;
+            top: 0; right: 0; bottom: 0;
+            width: 300px;
+            background-image: url("{% static 'img/araña.png' %}");
+            background-repeat: no-repeat;
+            background-position: center right;
+            background-size: contain;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        .ticket-header h1 {
+            font-size: 3em;
+            margin: 0;
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 0 #000;
+            line-height: 1;
             color: white;
+        }
+        .ticket-header .sub-header {
+            font-size: 1.3em;
+            color: #00bcd4;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-bottom: 15px;
+        }
+
+        .ticket-owner-box {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-left: 8px solid #00bcd4;
+            padding: 15px 25px;
+            border-radius: 8px;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+
+        .ticket-owner-label {
+            font-size: 0.9em;
+            color: #ccc;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .ticket-owner-name {
+            font-size: 2em;
+            font-weight: 800;
+            color: white;
+            text-transform: uppercase;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .ticket-footer {
+            text-align: right;
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #00bcd4;
+            letter-spacing: 2px;
+        }
+
+        /* Estilos para los botones y tarjetas del admin */
+        .card {
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .card-header-custom {
+            background-color: #003366;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+        .btn-custom {
+            background: linear-gradient(45deg, #00bcd4, #008ba3);
+            color: white;
+            font-weight: bold;
+            padding: 15px 40px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0, 188, 212, 0.4);
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+        .btn-custom:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 188, 212, 0.6);
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .ticket-container { flex-direction: column; }
+            .ticket-left-section { width: 100%; border-right: none; border-bottom: 2px dashed rgba(255,255,255,0.3); flex-direction: row; justify-content: space-around; }
+            .ticket-right-section { width: 100%; text-align: center; }
+            .ticket-footer { text-align: center; }
+            .ticket-header h1 { font-size: 2em; }
+            .ticket-number-circle { width: 100px; height: 100px; margin-bottom: 0; }
+            .ticket-number-circle span { font-size: 3em; }
+        }
+        
+        /* Círculo pequeño para la tabla */
+        .boleta-circulo-small {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #003366;
+            color: white;
+            font-weight: bold;
         }
     </style>
 {% endblock %}
@@ -28,72 +241,107 @@
 
 {% block content %}
 <div id="content-main">
-    <h1>Sorteo Visual para: {{ rifa.nombre }}</h1>
+    
+    <h1 class="main-title">Sorteo Visual: {{ rifa.nombre }}</h1>
     
     {% if nuevo_ganador %}
-        <div style="text-align: center; margin-bottom: 30px;">
-            <h2 style="color: #27ae60; font-size: 2em;">🎉 ¡NUEVO GANADOR! 🎉</h2>
+        <div style="text-align: center; margin-bottom: 40px;">
+            <h2 style="color: #28a745; font-size: 2em; margin-bottom: 20px; font-weight: 900;">🎉 ¡TENEMOS UN GANADOR! 🎉</h2>
             
-            <div class="ticket-container" style="max-width: 350px;"> <div class="spider-decoration"></div>
-                <div class="ticket-header">
-                    <h1>TICKET DE RIFA</h1>
-                </div>
-                <div class="ticket-content">
-                    <div class="ticket-left-circle">
-                        <span>{{ nuevo_ganador.numero }}</span>
+            <div class="ticket-wrapper">
+                <div class="ticket-container">
+                    
+                    <div class="ticket-left-section">
+                        <div class="ticket-number-circle">
+                            <span>{{ nuevo_ganador.numero }}</span>
+                        </div>
+                        <div class="ticket-logo-box">
+                            <img src="{% static 'img/ingsistemas.png' %}" alt="Logo">
+                        </div>
                     </div>
-                    <div class="ticket-right-logo">
-                        <img src="{% static 'img/logo_renixir.png' %}" alt="Logo Renixir">
+
+                    <div class="ticket-right-section">
+                        <div class="spider-bg"></div>
+                        
+                        <div class="ticket-header">
+                            <h1>GRAN RIFA</h1>
+                            <div class="sub-header">INGENIERÍA DE SISTEMAS</div>
+                        </div>
+                        
+                        <div class="ticket-owner-box">
+                            <div class="ticket-owner-label">GANADOR:</div>
+                            <div class="ticket-owner-name">{{ nuevo_ganador.nombre_propietario }}</div>
+                        </div>
+
+                        <div class="ticket-footer">
+                            CAPORALES RENIXIR CAÑETE
+                        </div>
                     </div>
                 </div>
-                <div class="ticket-name-label">NOMBRE:</div>
-                <div class="ticket-name-value">{{ nuevo_ganador.nombre_propietario }}</div>
-                <div class="ticket-footer">
-                    CAPORALES RENIXIR CAÑETE
                 </div>
-            </div>
-            <p style="font-size: 1.2em; margin-top: 15px;">
-                Creada por: <strong>{{ nuevo_ganador.usuario_creador.username }}</strong>
+            
+            <p style="font-size: 1.2em; color: #666; margin-top: 10px;">
+                Boleta vendida por: <strong>{{ nuevo_ganador.usuario_creador.username }}</strong>
             </p>
         </div>
-        <hr>
     {% endif %}
 
-    <div style="text-align: center; background: #f9f9f9; padding: 20px; border-radius: 10px; margin-top: 30px; border: 1px solid #ddd;">
-        {% if boletas_participantes %}
-            <h2 style="margin-top: 0;">Próximo Sorteo</h2>
-            <p style="font-size: 1.1em;">
-                Quedan <strong>{{ boletas_participantes.count }} boletas</strong> participando.
-            </p>
-            <form method="post">
-                {% csrf_token %}
-                <p>Haz clic para seleccionar al siguiente ganador.</p>
-                <button type="submit" class="button" style="background: #E67E22; color: white; font-size: 1.2em; padding: 10px 20px; height: auto;">
-                    ¡Sacar Siguiente Ganador!
-                </button>
-            </form>
-        {% else %}
-             <h2 style="color: #e74c3c; margin-top: 0;">Sorteo Finalizado</h2>
-            <p>No quedan más boletas participantes para sortear en esta rifa.</p>
-        {% endif %}
+    <div class="card mb-4">
+        <div class="card-header-custom">
+            <h2 style="margin:0;">Realizar Sorteo</h2>
+        </div>
+        <div class="card-body text-center" style="padding: 30px;">
+            {% if boletas_participantes %}
+                <p style="font-size: 1.2em; color: #333;">
+                    Quedan <strong>{{ boletas_participantes.count }} boletas</strong> en el ánfora.
+                </p>
+                <form method="post" class="mt-4">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-custom">
+                        ¡SACAR TICKET GANADOR!
+                    </button>
+                </form>
+            {% else %}
+                <h2 style="color: #dc3545;">Sorteo Finalizado</h2>
+                <p>No quedan más boletas participantes.</p>
+            {% endif %}
+        </div>
     </div>
 
     {% if ganadores_anteriores %}
-        <div style="background: #eafde7; border: 1px solid #2ecc71; padding: 15px; border-radius: 8px; margin-top: 30px;">
-            <h2 style="color: #27ae60; margin-top: 0;">🏆 Ganadores Anteriores</h2>
-            <ul style="list-style: none; padding-left: 0;">
-                {% for ganador in ganadores_anteriores %}
-                    <li style="font-size: 1.2em; border-bottom: 1px solid #eee; padding: 5px 0;">
-                        <strong>Boleta #{{ ganador.numero }}</strong> - {{ ganador.nombre_propietario }} 
-                        <span style="color: #555;">(Creada por: {{ ganador.usuario_creador.username }})</span>
-                    </li>
-                {% endfor %}
-            </ul>
+        <div class="card">
+            <div class="card-header-custom" style="background-color: #17a2b8;"> <h2 style="margin:0; font-size: 1.5em;">🏆 Historial de Ganadores</h2>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover m-0">
+                    <thead class="thead-light">
+                        <tr>
+                            <th class="text-center">Boleta #</th> 
+                            <th>Nombre</th>
+                            <th>Vendedor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ganador in ganadores_anteriores %}
+                        <tr>
+                            <td class="text-center" style="vertical-align: middle;">
+                                <span class="boleta-circulo-small">{{ ganador.numero }}</span>
+                            </td>
+                            <td style="vertical-align: middle; font-weight: bold; font-size: 1.1em;">{{ ganador.nombre_propietario }}</td>
+                            <td style="vertical-align: middle; color: #666;">{{ ganador.usuario_creador.username }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     {% endif %}
 
-    <div style="margin-top: 30px; text-align: center;">
-        <a href="/admin/rifa/rifa/" class="button">Volver a la lista de Rifas</a>
+    <div style="margin-top: 40px; text-align: center;">
+        <a href="{% url 'admin:rifa_rifa_changelist' %}" style="color: #6c757d; text-decoration: none; font-weight: bold;">
+            &larr; Volver a la lista de Rifas
+        </a>
     </div>
+
 </div>
 {% endblock %}

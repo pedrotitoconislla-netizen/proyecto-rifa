@@ -38,6 +38,7 @@ if RAILWAY_HOSTNAME:
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -117,7 +118,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es-pe'
 
 TIME_ZONE = 'UTC'
 
@@ -155,3 +156,36 @@ CSRF_TRUSTED_ORIGINS = []
 if RAILWAY_HOSTNAME:
     # Railway usa https
     CSRF_TRUSTED_ORIGINS.append(f'https://{RAILWAY_HOSTNAME}')
+
+
+
+JAZZMIN_SETTINGS = {
+    # Título de la ventana del navegador
+    "site_title": "Admin Rifas Renixir",
+
+    # Título en la barra de login y en la cabecera
+    "site_header": "Rifas Renixir",
+
+    # Logo (usa el mismo de tus boletas)
+    # Asegúrate que esta ruta sea correcta
+    "site_logo": "img/logo_renixir.jpg",
+
+    # Tema (hay muchos, "darkly" se verá bien con tu diseño)
+    "theme": "darkly",
+    "ui_fluid": True,
+    # --- AQUÍ LA MAGIA ---
+    # Enlaces en el menú superior
+    "topmenu_links": [
+
+        # 1. Enlace para "Volver al Sitio"
+        # Apunta a la raíz "/", que redirigirá a "mis-boletas" o "login"
+        {"name": "Ir al Sitio Web", "url": "/", "new_window": False},
+
+        # 2. Enlace a tu modelo de Usuarios (útil)
+        {"model": "auth.User"},
+    ],
+
+    # --- Mejoras visuales ---
+    "show_ui_builder": False, # Oculta el personalizador en vivo
+    "changeform_format": "horizontal_tabs", # Mejora la vista de "editar"
+}

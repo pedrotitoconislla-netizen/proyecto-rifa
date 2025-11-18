@@ -1,35 +1,313 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Mis Boletas de Rifa{% endblock %}
+{% block title %}Mis Boletas - Sistemas{% endblock %}
 
 {% block content %}
+<style>
+    /* 1. Fondo General */
+    body {
+        background-color: #e9ecef;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    /* 2. CONTENEDOR PRINCIPAL (Caja Negra Elegante) */
+    .boletas-list-container {
+        /* ANCHO MÁXIMO AUMENTADO PARA PANTALLAS GRANDES */
+        max-width: 1200px; 
+        width: 95%;
+        margin: 40px auto;
+        padding: 40px;
+        
+        /* Fondo Negro/Gris Oscuro */
+        background: linear-gradient(145deg, #000000, #1a1a1a);
+        border-radius: 20px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6); 
+        border: 1px solid #333;
+    }
+
+    .page-title {
+        color: #ffffff;
+        font-size: 2.5em;
+        font-weight: 900;
+        text-align: center;
+        text-transform: uppercase;
+        margin-bottom: 50px;
+        text-shadow: 0 0 15px rgba(0, 188, 212, 0.6);
+    }
+    
+    .page-title::after {
+        content: '';
+        display: block;
+        width: 180px;
+        height: 5px;
+        background: #00bcd4; /* Cian Neón */
+        margin: 15px auto 0;
+        border-radius: 5px;
+        box-shadow: 0 0 15px #00bcd4;
+    }
+
+    /* 3. TICKET PANORÁMICO (Estilo Cheque/Entrada) */
+    .ticket-container {
+        /* Fondo Azul Vibrante */
+        background: linear-gradient(90deg, #003366 0%, #0056b3 100%);
+        border-radius: 15px;
+        margin-bottom: 40px;
+        position: relative;
+        overflow: hidden;
+        
+        /* Borde Brillante */
+        border: 2px solid #00bcd4;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        
+        /* --- DISTRIBUCIÓN HORIZONTAL (FLEXBOX) --- */
+        display: flex;
+        flex-direction: row; /* Elementos lado a lado */
+        align-items: stretch; /* Estirar altura */
+        min-height: 250px; /* Altura mínima para presencia */
+        color: white;
+        transition: transform 0.3s ease;
+    }
+
+    .ticket-container:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 50px rgba(0, 188, 212, 0.3);
+    }
+
+    /* --- PARTE IZQUIERDA (Gráficos) --- */
+    .ticket-left-section {
+        width: 35%; /* Ocupa el 35% del ancho */
+        background-color: rgba(0, 0, 0, 0.2); /* Un poco más oscuro */
+        display: flex;
+        flex-direction: column; /* Círculo arriba, Logo abajo */
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        position: relative;
+        border-right: 3px dashed rgba(255, 255, 255, 0.3); /* Línea de corte */
+    }
+
+    /* Círculo del Número Gigante */
+    .ticket-number-circle {
+        width: 140px;
+        height: 140px;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 5px solid #00bcd4; /* Borde Cian */
+        box-shadow: 0 0 20px rgba(0, 188, 212, 0.5);
+        margin-bottom: 15px;
+    }
+    .ticket-number-circle span {
+        font-size: 4.5em;
+        font-weight: 900;
+        color: #003366;
+        line-height: 1;
+        font-family: 'Arial Black', sans-serif;
+    }
+
+    /* Logo Debajo del Número */
+    .ticket-logo-box img {
+        height: 60px;
+        background: white;
+        padding: 5px 15px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    /* Agujeros decorativos en la línea de corte */
+    .ticket-left-section::after, .ticket-left-section::before {
+        content: '';
+        position: absolute;
+        right: -15px;
+        width: 30px;
+        height: 30px;
+        background-color: #151515; /* Del mismo color que el fondo negro de la lista */
+        border-radius: 50%;
+        z-index: 5;
+    }
+    .ticket-left-section::before { top: -15px; }
+    .ticket-left-section::after { bottom: -15px; }
+
+
+    /* --- PARTE DERECHA (Información) --- */
+    .ticket-right-section {
+        width: 65%; /* Ocupa el 65% restante */
+        padding: 30px 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: relative;
+    }
+
+    /* Decoración de araña en el fondo derecho */
+    .spider-bg {
+        position: absolute;
+        top: 0; right: 0; bottom: 0;
+        width: 300px;
+        background-image: url("{% static 'img/araña.png' %}");
+        background-repeat: no-repeat;
+        background-position: center right;
+        background-size: contain;
+        opacity: 0.1;
+        pointer-events: none;
+    }
+
+    .ticket-header h1 {
+        font-size: 3.5em;
+        margin: 0;
+        font-weight: 900;
+        letter-spacing: 2px;
+        text-shadow: 2px 2px 0 #000;
+        line-height: 1;
+    }
+    .ticket-header .sub-header {
+        font-size: 1.5em;
+        color: #00bcd4;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 4px;
+        margin-bottom: 20px;
+    }
+
+    .ticket-owner-box {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-left: 8px solid #00bcd4;
+        padding: 15px 25px;
+        border-radius: 8px;
+        width: 100%; /* Ocupa todo el ancho disponible */
+        box-sizing: border-box;
+    }
+
+    .ticket-owner-label {
+        font-size: 0.9em;
+        color: #ccc;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 5px;
+    }
+
+    .ticket-owner-name {
+        font-size: 2em;
+        font-weight: 800;
+        color: white;
+        text-transform: uppercase;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .ticket-footer {
+        text-align: right;
+        font-size: 1.1em;
+        font-weight: bold;
+        color: #00bcd4;
+        letter-spacing: 2px;
+        margin-top: 10px;
+    }
+
+    /* === RESPONSIVE PARA CELULARES === */
+    /* Aquí volvemos al diseño vertical porque en celular no cabe horizontal */
+    @media (max-width: 768px) {
+        .boletas-list-container {
+            padding: 20px;
+            width: auto;
+        }
+        
+        .ticket-container {
+            flex-direction: column; /* Volver a columna */
+            min-height: auto;
+        }
+        
+        .ticket-left-section {
+            width: 100%;
+            flex-direction: row; /* Poner círculo y logo lado a lado */
+            justify-content: space-around;
+            border-right: none;
+            border-bottom: 2px dashed rgba(255,255,255,0.3);
+        }
+
+        /* Ocultar los agujeros decorativos en móvil */
+        .ticket-left-section::after, .ticket-left-section::before {
+            display: none;
+        }
+        
+        .ticket-number-circle {
+            width: 100px; height: 100px;
+            margin-bottom: 0;
+        }
+        .ticket-number-circle span { font-size: 3em; }
+        
+        .ticket-right-section {
+            width: 100%;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .ticket-header h1 { font-size: 2.5em; }
+        .ticket-owner-name { font-size: 1.5em; }
+        .ticket-footer { text-align: center; }
+    }
+</style>
+
 <div class="boletas-list-container">
-    <h2>Mis Boletas de Rifa</h2>
+    <div class="page-title">Mis Boletas</div>
+    
     {% if boletas %}
-        {% for boleta in boletas %}
-        <div class="ticket-container">
-            <div class="spider-decoration"></div>
-            <div class="ticket-header">
-                <h1>TICKET DE RIFA</h1>
-            </div>
-            <div class="ticket-content">
-                <div class="ticket-left-circle">
-                    <span>{{ boleta.numero }}</span>
+        <div class="boletas-grid">
+            {% for boleta in boletas %}
+            
+            <div class="ticket-container">
+                
+                <div class="ticket-left-section">
+                    <div class="ticket-number-circle">
+                        <span>{{ boleta.numero }}</span>
+                    </div>
+                    <div class="ticket-logo-box">
+                        <img src="{% static 'img/ingsistemas.png' %}" alt="Logo">
+                    </div>
                 </div>
-                <div class="ticket-right-logo">
-                    <img src="{% static 'img/logo_renixir.jpg' %}" alt="Logo Renixir">
+
+                <div class="ticket-right-section">
+                    <div class="spider-bg"></div> <div class="ticket-header">
+                        <h1>GRAN RIFA</h1>
+                        <div class="sub-header">INGENIERÍA DE SISTEMAS</div>
+                    </div>
+                    
+                    <div class="ticket-owner-box">
+                        <div class="ticket-owner-label">Propietario</div>
+                        <div class="ticket-owner-name">{{ boleta.nombre_propietario }}</div>
+                    </div>
+
+                    <div class="ticket-footer">
+                        ¡MUCHA SUERTE!
+                    </div>
                 </div>
+
             </div>
-            <div class="ticket-name-label">NOMBRE:</div>
-            <div class="ticket-name-value">{{ boleta.nombre_propietario }}</div>
-            <div class="ticket-footer">
-                CAPORALES RENIXIR CAÑETE
-            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
     {% else %}
-        <p>No has creado ninguna boleta todavía. ¡Anímate a <a href="{% url 'crear_boleta' %}" style="color: #FFC107;">crear una</a>!</p>
+        <div style="text-align: center; padding: 80px 20px;">
+            <p style="font-size: 1.4em; color: #ccc; margin-bottom: 25px;">Aún no tienes boletas registradas.</p>
+            <a href="{% url 'crear_boleta' %}" style="
+                display: inline-block;
+                background-color: #00bcd4;
+                color: #003366;
+                padding: 15px 35px;
+                text-decoration: none;
+                border-radius: 50px;
+                font-weight: 900;
+                font-size: 1.2em;
+                box-shadow: 0 0 20px rgba(0, 188, 212, 0.5);
+                transition: transform 0.2s;
+            ">
+                + COMPRAR BOLETA
+            </a>
+        </div>
     {% endif %}
 </div>
 {% endblock %}
